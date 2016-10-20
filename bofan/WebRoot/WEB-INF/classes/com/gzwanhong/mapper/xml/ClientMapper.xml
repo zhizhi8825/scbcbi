@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>                                          
+<!DOCTYPE mapper                                                                     
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"                                      
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">                                   
+<mapper namespace="com.gzwanhong.mapper.ClientMapper">                               
+	<cache></cache>                                                                     
+                                                                                     
+	<sql id="dbName"> client </sql>                                                     
+	<sql id="columns"> id,wechat_name,client_no,client_name,client_address,pan_dir,contact_number,contact_people,use_status,renewal_id,period_begin,period_end,create_time </sql>                                                        
+	<sql id="insertVal"> #{id,jdbcType=VARCHAR},#{wechatName,jdbcType=VARCHAR},#{clientNo,jdbcType=VARCHAR},#{clientName,jdbcType=VARCHAR},#{clientAddress,jdbcType=VARCHAR},#{panDir,jdbcType=VARCHAR},#{contactNumber,jdbcType=VARCHAR},#{contactPeople,jdbcType=VARCHAR},#{useStatus,jdbcType=VARCHAR},#{renewalId,jdbcType=VARCHAR},#{periodBegin,jdbcType=TIMESTAMP},#{periodEnd,jdbcType=TIMESTAMP},#{createTime,jdbcType=TIMESTAMP} </sql>                                                      
+	<sql id="insertVal2"> #{item.id,jdbcType=VARCHAR},#{item.wechatName,jdbcType=VARCHAR},#{item.clientNo,jdbcType=VARCHAR},#{item.clientName,jdbcType=VARCHAR},#{item.clientAddress,jdbcType=VARCHAR},#{item.panDir,jdbcType=VARCHAR},#{item.contactNumber,jdbcType=VARCHAR},#{item.contactPeople,jdbcType=VARCHAR},#{item.useStatus,jdbcType=VARCHAR},#{item.renewalId,jdbcType=VARCHAR},#{item.periodBegin,jdbcType=TIMESTAMP},#{item.periodEnd,jdbcType=TIMESTAMP},#{item.createTime,jdbcType=TIMESTAMP} </sql>                                                     
+	<sql id="updateVal"> set wechat_name = #{wechatName,jdbcType=VARCHAR},client_no = #{clientNo,jdbcType=VARCHAR},client_name = #{clientName,jdbcType=VARCHAR},client_address = #{clientAddress,jdbcType=VARCHAR},pan_dir = #{panDir,jdbcType=VARCHAR},contact_number = #{contactNumber,jdbcType=VARCHAR},contact_people = #{contactPeople,jdbcType=VARCHAR},use_status = #{useStatus,jdbcType=VARCHAR},renewal_id = #{renewalId,jdbcType=VARCHAR},period_begin = #{periodBegin,jdbcType=TIMESTAMP},period_end = #{periodEnd,jdbcType=TIMESTAMP} </sql>                                                     
+	<sql id="updateVal2"> set wechat_name = #{item.wechatName,jdbcType=VARCHAR},client_no = #{item.clientNo,jdbcType=VARCHAR},client_name = #{item.clientName,jdbcType=VARCHAR},client_address = #{item.clientAddress,jdbcType=VARCHAR},pan_dir = #{item.panDir,jdbcType=VARCHAR},contact_number = #{item.contactNumber,jdbcType=VARCHAR},contact_people = #{item.contactPeople,jdbcType=VARCHAR},use_status = #{item.useStatus,jdbcType=VARCHAR},renewal_id = #{item.renewalId,jdbcType=VARCHAR},period_begin = #{item.periodBegin,jdbcType=TIMESTAMP},period_end = #{item.periodEnd,jdbcType=TIMESTAMP} </sql>                                                    
+                                                                                     
+    <resultMap type="com.gzwanhong.domain.Client" id="client"> 
+    	<id property="id" column="id"/>
+    	<result property="wechatName" column="wechat_name"/>
+    	<result property="clientNo" column="client_no"/>
+    	<result property="clientName" column="client_name"/>
+    	<result property="clientAddress" column="client_address"/>
+    	<result property="panDir" column="pan_dir"/>
+    	<result property="contactNumber" column="contact_number"/>
+    	<result property="contactPeople" column="contact_people"/>
+    	<result property="useStatus" column="use_status"/>
+    	<result property="renewalId" column="renewal_id"/>
+    	<result property="periodBegin" column="period_begin"/>
+    	<result property="periodEnd" column="period_end"/>
+    	<result property="createTime" column="create_time"/>
+    </resultMap>
+                                                                                     
+	<select id="queryById" resultMap="client">                                        
+		select * from                                                                   
+		<include refid="dbName" />                                                    
+		where id =                                                                      
+		#{id}                                                                           
+	</select>                                                                           
+                                                                                     
+	<select id="queryByIds" resultMap="client">                                       
+		select * from                                                                   
+		<include refid="dbName" />                                                    
+		where id in                                                                     
+		<foreach collection="list" item="item" open="(" close=")"               
+			separator=",">#{item}</foreach>                                           
+	</select>                                                                           
+                                                                                     
+	<insert id="save">                                                                
+		insert into                                                                     
+		<include refid="dbName" />                                                    
+		(                                                                               
+		<include refid="columns" />                                                   
+		) values                                                                        
+		(                                                                               
+		<include refid="insertVal" />                                                 
+		)                                                                               
+	</insert>                                                                           
+                                                                                     
+	<insert id="saveAll">                                                             
+		insert into                                                                     
+		<include refid="dbName" />                                                    
+		(                                                                               
+		<include refid="columns" />                                                   
+		) values                                                                        
+		<foreach collection="list" item="item" index="index" separator=",">     
+		(                                                                               
+			<include refid="insertVal2" />                                            
+		)                                                                               
+		</foreach>                                                                      
+	</insert>                                                                           
+                                                                                     
+	<delete id="removeById">                                                          
+		delete from                                                                     
+		<include refid="dbName" />                                                    
+		where id = #{id}                                                                
+	</delete>                                                                           
+                                                                                     
+	<delete id="removeByIds">                                                         
+		delete from                                                                     
+		<include refid="dbName" />                                                    
+		where id in                                                                     
+		<foreach collection="list" item="item" separator="," open="("           
+			close=")">#{item}</foreach>                                               
+	</delete>                                                                           
+                                                                                     
+                                                                                     
+	<delete id="removeBySql">                                   
+		${sqlStr}                                                                       
+	</delete>                                                                           
+                                                                                     
+                                                                                     
+	<update id="update">                                                              
+		update                                                                          
+		<include refid="dbName" />                                                    
+		<include refid="updateVal" />                                                 
+		where id = #{id}                                                                
+	</update>                                                                           
+                                                                                     
+	<update id="updateAll">                                                           
+		<foreach collection="list" item="item" index="index" open="begin"       
+			close="end;">                                                             
+			update                                                                      
+			<include refid="dbName" />                                                
+			<include refid="updateVal2" />                                            
+		where id = #{item.id};                                                          
+		</foreach>                                                                      
+	</update>                                                                           
+                                                                                     
+	<update id="updateBySql">                                                         
+		${sqlStr}                                                                       
+	</update>                                                                           
+                                                                                     
+	<select id="queryByExample" resultMap="client">                                   
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryBySql" resultMap="client">                                       
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryBySqlToMap" resultType="map">                                  
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryCountByExample" resultType="integer">                          
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<!-- 以上是自动生成的代码，自定义的查询什么的请写在下面 -->                         
+</mapper>             

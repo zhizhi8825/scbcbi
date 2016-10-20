@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="UTF-8" ?>                                          
+<!DOCTYPE mapper                                                                     
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"                                      
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">                                   
+<mapper namespace="com.gzwanhong.mapper.TrackRecordMapper">                               
+                                                                                     
+	<sql id="dbName"> track_record </sql>                                                     
+	<sql id="columns"> id,client_id,user_id,record,status,update_id,update_time,create_time </sql>                                                        
+	<sql id="insertVal"> #{id,jdbcType=VARCHAR},#{clientId,jdbcType=VARCHAR},#{userId,jdbcType=VARCHAR},#{record,jdbcType=VARCHAR},#{status,jdbcType=NUMERIC},#{updateId,jdbcType=VARCHAR},#{updateTime,jdbcType=TIMESTAMP},#{createTime,jdbcType=TIMESTAMP} </sql>                                                      
+	<sql id="insertVal2"> #{item.id,jdbcType=VARCHAR},#{item.clientId,jdbcType=VARCHAR},#{item.userId,jdbcType=VARCHAR},#{item.record,jdbcType=VARCHAR},#{item.status,jdbcType=NUMERIC},#{item.updateId,jdbcType=VARCHAR},#{item.updateTime,jdbcType=TIMESTAMP},#{item.createTime,jdbcType=TIMESTAMP} </sql>                                                     
+	<sql id="updateVal"> set client_id = #{clientId,jdbcType=VARCHAR},user_id = #{userId,jdbcType=VARCHAR},record = #{record,jdbcType=VARCHAR},status = #{status,jdbcType=NUMERIC},update_id = #{updateId,jdbcType=VARCHAR},update_time = #{updateTime,jdbcType=TIMESTAMP} </sql>                                                     
+	<sql id="updateVal2"> set client_id = #{item.clientId,jdbcType=VARCHAR},user_id = #{item.userId,jdbcType=VARCHAR},record = #{item.record,jdbcType=VARCHAR},status = #{item.status,jdbcType=NUMERIC},update_id = #{item.updateId,jdbcType=VARCHAR},update_time = #{item.updateTime,jdbcType=TIMESTAMP} </sql>                                                    
+                                                                                     
+    <resultMap type="com.gzwanhong.domain.TrackRecord" id="trackRecord"> 
+    	<id property="id" column="id"/>
+    	<result property="clientId" column="client_id"/>
+    	<result property="userId" column="user_id"/>
+    	<result property="record" column="record"/>
+    	<result property="status" column="status"/>
+    	<result property="updateId" column="update_id"/>
+    	<result property="updateTime" column="update_time"/>
+    	<result property="createTime" column="create_time"/>
+    </resultMap>
+                                                                                     
+	<select id="queryById" resultMap="trackRecord">                                        
+		select * from                                                                   
+		<include refid="dbName" />                                                    
+		where id =                                                                      
+		#{id}                                                                           
+	</select>                                                                           
+                                                                                     
+	<select id="queryByIds" resultMap="trackRecord">                                       
+		select * from                                                                   
+		<include refid="dbName" />                                                    
+		where id in                                                                     
+		<foreach collection="list" item="item" open="(" close=")"               
+			separator=",">#{item}</foreach>                                           
+	</select>                                                                           
+                                                                                     
+	<insert id="save">                                                                
+		insert into                                                                     
+		<include refid="dbName" />                                                    
+		(                                                                               
+		<include refid="columns" />                                                   
+		) values                                                                        
+		(                                                                               
+		<include refid="insertVal" />                                                 
+		)                                                                               
+	</insert>                                                                           
+                                                                                     
+	<insert id="saveAll">                                                             
+		insert into <include refid="dbName" /> (<include refid="columns" />) values <foreach collection="list" item="item" index="index" separator=","> (<include refid="insertVal2" />) </foreach>
+	</insert>                                                                           
+                                                                                     
+	<delete id="removeById">                                                          
+		delete from                                                                     
+		<include refid="dbName" />                                                    
+		where id = #{id}                                                                
+	</delete>                                                                           
+                                                                                     
+	<delete id="removeByIds">                                                         
+		delete from                                                                     
+		<include refid="dbName" />                                                    
+		where id in                                                                     
+		<foreach collection="list" item="item" separator="," open="("           
+			close=")">#{item}</foreach>                                               
+	</delete>                                                                           
+                                                                                     
+                                                                                     
+	<delete id="removeBySql">                                   
+		${sqlStr}                                                                       
+	</delete>                                                                           
+                                                                                     
+                                                                                     
+	<update id="update">                                                              
+		update                                                                          
+		<include refid="dbName" />                                                    
+		<include refid="updateVal" />                                                 
+		where id = #{id}                                                                
+	</update>                                                                           
+                                                                                     
+	<update id="updateAll">                                                           
+		<foreach collection="list" item="item" index="index" open="" close=";" separator=";">update <include refid="dbName" /> <include refid="updateVal2" /> where id = #{item.id}</foreach>	</update>                                                                           
+                                                                                     
+	<update id="updateBySql">                                                         
+		${sqlStr}                                                                       
+	</update>                                                                           
+                                                                                     
+	<select id="queryByExample" resultMap="trackRecord">                                   
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryBySql" resultMap="trackRecord">                                       
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryBySqlToMap" resultType="map">                                  
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryCountByExample" resultType="integer">                          
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<!-- 以上是自动生成的代码，自定义的查询什么的请写在下面 -->                         
+	
+	<select id="queryDatagrid">       
+		<![CDATA[
+		SELECT
+			tr.id,
+			tr.client_id AS clientId,
+			tr.user_id AS userId,
+			tr.record,
+			tr.status,
+			tr.update_id AS updateId,
+			tr.update_time AS updateTime,
+			tr.create_time AS createTime,
+			c.`name` AS clientName,
+			u.show_name AS showName
+		FROM
+			track_record tr
+		INNER JOIN `user` u ON tr.user_id = u.id
+		INNER JOIN client c ON tr.client_id = c.id
+		where 0=0
+			AND tr.status = 1
+		<< AND u.department_id IN (#{deptIds}) >>
+		<< AND u.id = #{userId} >>
+		<< AND u.id in (#{userIds}) >>
+		<< AND tr.client_id = #{clientId} >>
+		<< AND (c.`name` LIKE CONCAT('%', #{clientName}, '%') or c.pinyin LIKE CONCAT('%', #{clientName}, '%') ) >>
+		<< AND tr.create_time >= #{beginDate} >>
+		<< AND tr.create_time < ADDDATE(#{endDate},1) >>
+		order by tr.create_time desc
+		]]>
+	</select>                         
+</mapper>             

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8" ?>                                          
+<!DOCTYPE mapper                                                                     
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"                                      
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">                                   
+<mapper namespace="com.gzwanhong.mapper.ChangeRecordMapper">                               
+                                                                                     
+	<sql id="dbName"> change_record </sql>                                                     
+	<sql id="columns"> id,client_id,source_user_id,source_show_name,target_user_id,target_show_name,update_id,create_time </sql>                                                        
+	<sql id="insertVal"> #{id,jdbcType=VARCHAR},#{clientId,jdbcType=VARCHAR},#{sourceUserId,jdbcType=VARCHAR},#{sourceShowName,jdbcType=VARCHAR},#{targetUserId,jdbcType=VARCHAR},#{targetShowName,jdbcType=VARCHAR},#{updateId,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP} </sql>                                                      
+	<sql id="insertVal2"> #{item.id,jdbcType=VARCHAR},#{item.clientId,jdbcType=VARCHAR},#{item.sourceUserId,jdbcType=VARCHAR},#{item.sourceShowName,jdbcType=VARCHAR},#{item.targetUserId,jdbcType=VARCHAR},#{item.targetShowName,jdbcType=VARCHAR},#{item.updateId,jdbcType=VARCHAR},#{item.createTime,jdbcType=TIMESTAMP} </sql>                                                     
+	<sql id="updateVal"> set client_id = #{clientId,jdbcType=VARCHAR},source_user_id = #{sourceUserId,jdbcType=VARCHAR},source_show_name = #{sourceShowName,jdbcType=VARCHAR},target_user_id = #{targetUserId,jdbcType=VARCHAR},target_show_name = #{targetShowName,jdbcType=VARCHAR},update_id = #{updateId,jdbcType=VARCHAR} </sql>                                                     
+	<sql id="updateVal2"> set client_id = #{item.clientId,jdbcType=VARCHAR},source_user_id = #{item.sourceUserId,jdbcType=VARCHAR},source_show_name = #{item.sourceShowName,jdbcType=VARCHAR},target_user_id = #{item.targetUserId,jdbcType=VARCHAR},target_show_name = #{item.targetShowName,jdbcType=VARCHAR},update_id = #{item.updateId,jdbcType=VARCHAR} </sql>                                                    
+                                                                                     
+    <resultMap type="com.gzwanhong.domain.ChangeRecord" id="changeRecord"> 
+    	<id property="id" column="id"/>
+    	<result property="clientId" column="client_id"/>
+    	<result property="sourceUserId" column="source_user_id"/>
+    	<result property="sourceShowName" column="source_show_name"/>
+    	<result property="targetUserId" column="target_user_id"/>
+    	<result property="targetShowName" column="target_show_name"/>
+    	<result property="updateId" column="update_id"/>
+    	<result property="createTime" column="create_time"/>
+    </resultMap>
+                                                                                     
+	<select id="queryById" resultMap="changeRecord">                                        
+		select * from                                                                   
+		<include refid="dbName" />                                                    
+		where id =                                                                      
+		#{id}                                                                           
+	</select>                                                                           
+                                                                                     
+	<select id="queryByIds" resultMap="changeRecord">                                       
+		select * from                                                                   
+		<include refid="dbName" />                                                    
+		where id in                                                                     
+		<foreach collection="list" item="item" open="(" close=")"               
+			separator=",">#{item}</foreach>                                           
+	</select>                                                                           
+                                                                                     
+	<insert id="save">                                                                
+		insert into                                                                     
+		<include refid="dbName" />                                                    
+		(                                                                               
+		<include refid="columns" />                                                   
+		) values                                                                        
+		(                                                                               
+		<include refid="insertVal" />                                                 
+		)                                                                               
+	</insert>                                                                           
+                                                                                     
+	<insert id="saveAll">                                                             
+		insert into <include refid="dbName" /> (<include refid="columns" />) values <foreach collection="list" item="item" index="index" separator=","> (<include refid="insertVal2" />) </foreach>
+	</insert>                                                                           
+                                                                                     
+	<delete id="removeById">                                                          
+		delete from                                                                     
+		<include refid="dbName" />                                                    
+		where id = #{id}                                                                
+	</delete>                                                                           
+                                                                                     
+	<delete id="removeByIds">                                                         
+		delete from                                                                     
+		<include refid="dbName" />                                                    
+		where id in                                                                     
+		<foreach collection="list" item="item" separator="," open="("           
+			close=")">#{item}</foreach>                                               
+	</delete>                                                                           
+                                                                                     
+                                                                                     
+	<delete id="removeBySql">                                   
+		${sqlStr}                                                                       
+	</delete>                                                                           
+                                                                                     
+                                                                                     
+	<update id="update">                                                              
+		update                                                                          
+		<include refid="dbName" />                                                    
+		<include refid="updateVal" />                                                 
+		where id = #{id}                                                                
+	</update>                                                                           
+                                                                                     
+	<update id="updateAll">                                                           
+		<foreach collection="list" item="item" index="index" open="" close=";" separator=";">update <include refid="dbName" /> <include refid="updateVal2" /> where id = #{item.id}</foreach>	</update>                                                                           
+                                                                                     
+	<update id="updateBySql">                                                         
+		${sqlStr}                                                                       
+	</update>                                                                           
+                                                                                     
+	<select id="queryByExample" resultMap="changeRecord">                                   
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryBySql" resultMap="changeRecord">                                       
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryBySqlToMap" resultType="map">                                  
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryCountByExample" resultType="integer">                          
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<!-- 以上是自动生成的代码，自定义的查询什么的请写在下面 -->                         
+	<select id="queryDatagrid">       
+		<![CDATA[
+		SELECT
+			cr.id,
+			cr.source_show_name AS sourceShowName,
+			cr.target_show_name AS targetShowName,
+			cr.create_time AS createTime,
+			u.show_name AS updateName
+		FROM
+			change_record cr
+		LEFT JOIN `user` u ON cr.update_id = u.id
+		WHERE
+			cr.client_id = #{clientId}
+		ORDER BY
+			cr.create_time DESC
+		]]>
+	</select>                        
+</mapper>             

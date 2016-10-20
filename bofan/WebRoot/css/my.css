@@ -1,0 +1,23 @@
+.myTable {
+  	margin-top:2px;
+  	margin-bottom:2px;
+	margin-left:auto;
+	margin-right:auto;
+	border-collapse: collapse;
+	width:100%;
+ }
+.myTable td {
+	font-size:18px;
+	text-align:left;
+	padding: 2px 5px 2px 5px; 
+}
+.myTable td:nth-child(odd)  {
+	text-align:right;
+}
+.dialogTable{
+	width:100%;
+}
+.dialogTable td:first-child  {
+	font-size:18px;
+	text-align:right;
+}

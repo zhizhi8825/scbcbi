@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC "-//Apache Software Foundation//DTD Struts Configuration 2.1//EN" "http://struts.apache.org/dtds/struts-2.1.dtd">
+<struts>
+	<constant name="struts.devMode" value="true"/>
+	<constant name="struts.multipart.maxSize" value="10485760"/>
+	<package name="tax-defalut" extends="struts-default" abstract="true">
+		<interceptors>
+			<interceptor-stack name="logException">
+				<interceptor-ref name="defaultStack"/>
+					<interceptor-ref name="exception">
+					<param name="logEnabled">true</param>
+					<param name="logLevel">info</param>
+				</interceptor-ref>
+			</interceptor-stack>
+		</interceptors>
+		<default-interceptor-ref name="logException"/>
+		<global-results>
+			<result name="exception" type="chain">
+				<param name="namespace">/exceptionAction</param>
+				<param name="actionName">exception</param>
+			</result>
+		</global-results>
+		<global-exception-mappings>
+			<exception-mapping result="exception" exception="java.lang.Exception"/>
+		</global-exception-mappings>
+	</package>
+	
+	<package name="exceptionAction" namespace="/exceptionAction" extends="tax-defalut">
+		<action name="*" class="exceptionAction" method="{1}">
+			<result>/pages/{1}.jsp</result>
+		</action>
+	</package>
+	
+	<package name="menuAction" namespace="/menuAction" extends="tax-defalut">
+		<action name="*" class="menuAction" method="{1}">
+			<result>/pages/{1}.jsp</result>
+		</action>
+	</package>
+	
+	<package name="departmentAction" namespace="/departmentAction" extends="tax-defalut">
+		<action name="*" class="departmentAction" method="{1}">
+			<result>/pages/{1}.jsp</result>
+		</action>
+	</package>
+	
+	<package name="relationRoleMenuAction" namespace="/relationRoleMenuAction" extends="tax-defalut">
+		<action name="*" class="relationRoleMenuAction" method="{1}">
+			<result>/pages/{1}.jsp</result>
+		</action>
+	</package>
+	
+	<package name="roleAction" namespace="/roleAction" extends="tax-defalut">
+		<action name="*" class="roleAction" method="{1}">
+			<result>/pages/{1}.jsp</result>
+		</action>
+	</package>
+	
+	<package name="userAction" namespace="/userAction" extends="tax-defalut">
+		<action name="*" class="userAction" method="{1}">
+			<result>/pages/{1}.jsp</result>
+			<result name="main" type="chain">
+				<param name="namespace">/userAction</param>
+				<param name="actionName">main</param>
+			</result>
+			<result name="admin">/pages/admin.jsp</result>
+		</action>
+	</package>
+</struts>    

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>                                      
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN"           
+"http://mybatis.org/dtd/mybatis-3-config.dtd">                                
+<configuration>                                                                 
+	<typeAliases>                                                                  
+		<typeAlias type="com.gzwanhong.domain.ChangeRecord" alias="changeRecord" />
+		<typeAlias type="com.gzwanhong.domain.Client" alias="client" />
+		<typeAlias type="com.gzwanhong.domain.Department" alias="department" />
+		<typeAlias type="com.gzwanhong.domain.Dictionary" alias="dictionary" />
+		<typeAlias type="com.gzwanhong.domain.Menu" alias="menu" />
+		<typeAlias type="com.gzwanhong.domain.RelationRoleMenu" alias="relationRoleMenu" />
+		<typeAlias type="com.gzwanhong.domain.Role" alias="role" />
+		<typeAlias type="com.gzwanhong.domain.TrackRecord" alias="trackRecord" />
+		<typeAlias type="com.gzwanhong.domain.User" alias="user" />
+	</typeAliases>                                                                 
+</configuration>                                                                
