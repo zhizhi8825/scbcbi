@@ -48,7 +48,7 @@ public final class JsonUtil {
 	private static final String yyyy_MM_dd = "yyyy-MM-dd";
 
 	/**
-	 * 转换Java Bean 为 json
+	 * 转换Java Bean 为           json
 	 */
 	public static String beanToJson(Object o) {
 		StringWriter sw = new StringWriter(300);
