@@ -22,5 +22,6 @@ public interface ClientLogic {
 
 	public ResultEntity importClient(File file, String webPath, User user) throws Exception;
 
-	public ResultEntity importClientIntention(File file, String webPath, User user) throws Exception;
+	public ResultEntity importClientIntention(File file, String webPath, User user, String optionStr,
+			String sheetMapJson) throws Exception;
 }

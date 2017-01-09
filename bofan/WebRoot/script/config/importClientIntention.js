@@ -18,6 +18,7 @@
 	    	"columnName":"linkman",
 	    	"objectName":"clientList",
 	    	"columnIndex":1,
+	    	"isComment":true,
 	    	"methodName":"setLinkman",
 	    	"argClass":"java.lang.String"
 	    },

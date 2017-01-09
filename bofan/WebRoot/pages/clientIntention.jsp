@@ -29,10 +29,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     				{title:'公司名称',field:'name',width:100,sortable:true},
     				{title:'联系人',field:'linkman',width:100},
     				{title:'电话',field:'phone',width:100},        
+    				{title:'意向级别',field:'intentLevel',width:100,sortable:true},        
     				{title:'QQ',field:'qq',width:80}, 
     				{title:'邮箱',field:'email',width:100}, 
     				{title:'地址',field:'address',width:100},        
-    				{title:'意向级别',field:'intentLevel',width:100,sortable:true},        
     				{title:'项目名称',field:'projectName',width:100},        
     				{title:'备注',field:'remark',width:100},        
     				{title:'所属业务员',field:'showName',width:100},        
@@ -294,6 +294,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     			},
     			onLoadSuccess:function(data){
     				$("#form3").form("setData",{});
+    				if(data.rows.length > 0) {
+    					$("#form3").form("setData",data.rows[0]);
+    				}
     			}
     		});
     		
@@ -467,8 +470,87 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     			var filePath = $("#file1").val();
     			if(filePath){
     				showLoading();
+    				
+    				//组装导出格式信息
+    				var form6 = $("#form6").form("getData");
+   					var jsonStr = "";
+   					jsonStr += " {                                                      ";
+   					jsonStr += " 	\"classMsg\":{                                      ";
+   					jsonStr += " 		\"clientList\":\"com.gzwanhong.domain.Client\"  ";
+   					jsonStr += " 	},                                                  ";
+   					jsonStr += " 	\"startRow\":1,                                     ";
+   					jsonStr += " 	\"emptyClass\":{                                    ";
+   					jsonStr += " 		\"clientList\":0                                ";
+   					jsonStr += " 	},                                                  ";
+   					jsonStr += " 	\"columnMsg\":[                                     ";
+   					jsonStr += " 	    {                                               ";
+   					jsonStr += " 	    	\"columnName\":\"name\",                    ";
+   					jsonStr += " 	    	\"objectName\":\"clientList\",              ";
+   					jsonStr += " 	    	\"columnIndex\":"+(eval(form6.nameIndex)-1)+",                          ";
+   					jsonStr += " 	    	\"isComment\":"+(form6.nameComment ==1 ? true:false)+",       ";
+   					jsonStr += " 	    	\"methodName\":\"setName\",                 ";
+   					jsonStr += " 	    	\"argClass\":\"java.lang.String\"           ";
+   					jsonStr += " 	    },                                              ";
+   					jsonStr += " 	    {                                               ";
+   					jsonStr += " 	    	\"columnName\":\"linkman\",                 ";
+   					jsonStr += " 	    	\"objectName\":\"clientList\",              ";
+   					jsonStr += " 	    	\"columnIndex\":"+(eval(form6.linkmanIndex)-1)+",                          ";
+   					jsonStr += " 	    	\"isComment\":"+(form6.linkmanComment ==1 ? true:false)+",                         ";
+   					jsonStr += " 	    	\"methodName\":\"setLinkman\",              ";
+   					jsonStr += " 	    	\"argClass\":\"java.lang.String\"           ";
+   					jsonStr += " 	    },                                              ";
+   					jsonStr += " 	    {                                               ";
+   					jsonStr += " 	    	\"columnName\":\"field1\",                  ";
+   					jsonStr += " 	    	\"objectName\":\"clientList\",              ";
+   					jsonStr += " 	    	\"columnIndex\":"+(eval(form6.field1Index)-1)+",                          ";
+   					jsonStr += " 	    	\"isComment\":"+(form6.field1Comment ==1 ? true:false)+",       ";
+   					jsonStr += " 	    	\"methodName\":\"setField1\",               ";
+   					jsonStr += " 	    	\"argClass\":\"java.lang.String\"           ";
+   					jsonStr += " 	    },                                              ";
+   					jsonStr += " 	    {                                               ";
+   					jsonStr += " 	    	\"columnName\":\"project\",                 ";
+   					jsonStr += " 	    	\"objectName\":\"clientList\",              ";
+   					jsonStr += " 	    	\"columnIndex\":"+(eval(form6.projectIndex)-1)+",                          ";
+   					jsonStr += " 	    	\"isComment\":"+(form6.projectComment ==1 ? true:false)+",       ";
+   					jsonStr += " 	    	\"methodName\":\"setProject\",              ";
+   					jsonStr += " 	    	\"argClass\":\"java.lang.String\",          ";
+   					jsonStr += " 	    	\"valMap\":{                                ";
+   					jsonStr += " 	    		\"ISO9000\":\"ISO9000\",                ";
+   					jsonStr += " 	    		\"ISO14000\":\"ISO14000\",              ";
+   					jsonStr += " 	    		\"OHSAS18000\":\"OHSAS18000\",          ";
+   					jsonStr += " 	    		\"ISO20000\":\"ISO20000\",              ";
+   					jsonStr += " 	    		\"ISO27001\":\"ISO27001\",              ";
+   					jsonStr += " 	    		\"其它体系认证\":\"其它体系认证\",      ";
+   					jsonStr += " 	    		\"CE\":\"CE\",                          ";
+   					jsonStr += " 	    		\"建筑施工资质\":\"建筑施工资质\",      ";
+   					jsonStr += " 	    		\"建筑设计资质\":\"建筑设计资质\",      ";
+   					jsonStr += " 	    		\"系统集成资质\":\"系统集成资质\",      ";
+   					jsonStr += " 	    		\"安防资质\":\"安防资质\",              ";
+   					jsonStr += " 	    		\"运维资质\":\"运维资质\"               ";
+   					jsonStr += " 	    	}                                           ";
+   					jsonStr += " 	    },                                              ";
+   					jsonStr += " 	    {                                               ";
+   					jsonStr += " 	    	\"columnName\":\"remark\",                  ";
+   					jsonStr += " 	    	\"objectName\":\"clientList\",              ";
+   					jsonStr += " 	    	\"columnIndex\":"+(eval(form6.remarkIndex)-1)+",                          ";
+   					jsonStr += " 	    	\"isComment\":"+(form6.remarkComment ==1 ? true:false)+",       ";
+   					jsonStr += " 	    	\"methodName\":\"setRemark\",               ";
+   					jsonStr += " 	    	\"argClass\":\"java.lang.String\"           ";
+   					jsonStr += " 	    }                                               ";
+   					jsonStr += " 	]                                                   ";
+   					jsonStr += " }                                                      ";
+   					
+   					//再处理出sheet信息
+   					var sheetMap = {};
+   					sheetMap["A"] = form6.sheetMapA ? eval(form6.sheetMapA)-1 : null;
+   					sheetMap["B"] = form6.sheetMapB ? eval(form6.sheetMapB)-1 : null;
+   					sheetMap["C"] = form6.sheetMapC ? eval(form6.sheetMapC)-1 : null;
+   					sheetMap["D"] = form6.sheetMapD ? eval(form6.sheetMapD)-1 : null;
+   					sheetMap["O"] = form6.sheetMapO ? eval(form6.sheetMapO)-1 : null;
+    				
     				$("#fileForm").form("submit",{
     					url:"<%=path%>/clientAction/importClientIntention.action",
+    					queryParams:{"optionStr":jsonStr,"sheetMap":$.toJSON(sheetMap)},
     					success:function(r){
     						hideLoading();
     						var r = $.evalJSON(r);
@@ -488,6 +570,70 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     					}
     				});
     			}
+    		});
+    		
+    		$("#dialog6").dialog({
+    			title:"设置导入格式",
+    			iconCls:"icon-set",
+    			width:500,
+    			resizable:true,
+    			maximizable:true,
+    			closed:true,
+    			modal:true,
+    			buttons:[{
+    				text:"确定",
+    				iconCls:"icon-ok",
+    				handler:function(){
+    					$("#dialog6").dialog("close");
+    				}
+    			}]
+    		});
+    		
+    		$("#setImport").click(function(){
+    			$("#dialog6").dialog("open");
+    		});
+    		
+    		$("#select1").change(function(){
+    			var data = {};
+    			
+    			if($("#select1 option:selected").val() == 1){
+    				data = {
+        					nameIndex:1,
+        					nameComment:false,
+        					linkmanIndex:2,
+        					linkmanComment:false,
+        					field1Index:3,
+        					field1Comment:false,
+        					projectIndex:5,
+        					projectComment:false,
+        					remarkIndex:6,
+        					remarkComment:false,
+        					sheetMapA:1,
+        					sheetMapB:2,
+        					sheetMapC:3,
+        					sheetMapD:4,
+        					sheetMapO:5
+        			};
+    			} else {
+    				data = {
+        					nameIndex:1,
+        					nameComment:false,
+        					linkmanIndex:1,
+        					linkmanComment:true,
+        					field1Index:2,
+        					field1Comment:false,
+        					projectIndex:3,
+        					projectComment:false,
+        					remarkIndex:4,
+        					remarkComment:false,
+        					sheetMapA:1,
+        					sheetMapB:2,
+        					sheetMapC:3,
+        					sheetMapD:4,
+        					sheetMapO:5
+        			};
+    			}
+    			$("#form6").form("setData",data);
     		});
     	});
     </script>
@@ -509,6 +655,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
               					</form>
 		                     </td>
 		                     <td><div class=" datagrid-btn-separator"></td>
+		                     <td><a id="setImport" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-set',plain:true">设置</a></td>
+		                     <td><div class=" datagrid-btn-separator"></td>
 		                     <td><a href="<%=path %>/template/yiXiangLeiJi.xls" class="easyui-linkbutton" data-options="iconCls:'icon-excel',plain:true">模板</a></td>
 		                     <td><div class=" datagrid-btn-separator"></td>
 		                     <td><a id="addClient" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">增加</a></td>
@@ -519,7 +667,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		                     <td><div class=" datagrid-btn-separator"></td>
 		                     <td><a id="searchClient" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-search',plain:true">查询</a></td>
 		                     <td><div class=" datagrid-btn-separator"></td>
-		                     <td>搜索：<input type="text" id="clientName"/></td>
+		                     <td><input type="text" id="clientName"/></td>
 		                  </tr>
 		              </tbody>
 		           </table>
@@ -530,9 +678,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   			</div>
   		</div>
   	</div>
-  	<div region="east" style="width:310px;" title="跟踪明细"  split="true">
+  	<div region="east" style="width:280px;" title="跟踪明细"  split="true">
   		<div class="easyui-layout" fit="true">
-  			<div region="north" style="height:120px;" border="false" split="true">
+  			<div region="north" style="height:200px;" border="false" split="true">
   				<div class="datagrid-toolbar">
 		           <table cellspacing="0" cellpadding="0">
 		              <tbody>
@@ -547,7 +695,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		                  </tr>
 		              </tbody>
 		           </table>
-		           <form id="form3"><textarea id="record" name="record" rows="4" cols="38"></textarea></form>
+		           <form id="form3"><textarea id="record" name="record" rows="10" cols="40"></textarea></form>
 		        </div>
   			</div>
   			<div region="center" border="false">
@@ -679,6 +827,64 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   	</div>
   	<div id="dialog5">
   		<div style="height:100%;width:100%;" id="errorDiv"></div>
+  	</div>
+  	<div id="dialog6">
+ 		<div style="margin-top:20px;margin-left:15px;">
+ 			选择模板类型：
+  			<select id="select1">
+  				<option value="1">模板1</option>
+  				<option value="2">模板2(联系方式在附注里)</option>
+  			</select>
+ 		</div>
+  		<form id="form6">
+	  		<table style="font-size:medium ;border-collapse: collapse;margin:14px;width:460px;text-align:center;border-color:activeborder;" border="5px">
+	  			<tr style="background-color:#9999CC;font-weight:bold;">
+	  				<td style="padding:4px;">内容名称</td>
+	  				<td>对应Excel的列</td>
+	  				<td>是否在附注里</td>
+	  			</tr>
+	  			<tr>
+	  				<td>公司名称</td>
+	  				<td><input type="text" name="nameIndex" value="1"/></td>
+	  				<td><input type="checkbox" name="nameComment"/></td>
+	  			</tr>
+	  			<tr>
+	  				<td>联系人</td>
+	  				<td><input type="text" name="linkmanIndex" value="2"/></td>
+	  				<td><input type="checkbox" name="linkmanComment"/></td>
+	  			</tr>
+	  			<tr>
+	  				<td>跟踪信息</td>
+	  				<td><input type="text" name="field1Index" value="3"/></td>
+	  				<td><input type="checkbox" name="field1Comment"/></td>
+	  			</tr>
+	  			<tr>
+	  				<td>项目</td>
+	  				<td><input type="text" name="projectIndex" value="5"/></td>
+	  				<td><input type="checkbox" name="projectComment"/></td>
+	  			</tr>
+	  			<tr>
+	  				<td>备注</td>
+	  				<td><input type="text" name="remarkIndex" value="6"/></td>
+	  				<td><input type="checkbox" name="remarkComment"/></td>
+	  			</tr>
+	  			<tr>
+	  				<td colspan="3">A级意向在第 <input type="text" value="1" name="sheetMapA" style="width:50px;"/> 个Sheet表格</td>
+	  			</tr>
+	  			<tr>
+	  				<td colspan="3">B级意向在第 <input type="text" value="2" name="sheetMapB" style="width:50px;"/> 个Sheet表格</td>
+	  			</tr>
+	  			<tr>
+	  				<td colspan="3">C级意向在第 <input type="text" value="3" name="sheetMapC" style="width:50px;"/> 个Sheet表格</td>
+	  			</tr>
+	  			<tr>
+	  				<td colspan="3">D级意向在第 <input type="text" value="4" name="sheetMapD" style="width:50px;"/> 个Sheet表格</td>
+	  			</tr>
+	  			<tr>
+	  				<td colspan="3">O级意向在第 <input type="text" value="5" name="sheetMapO" style="width:50px;"/> 个Sheet表格</td>
+	  			</tr>
+	  		</table>
+  		</form>
   	</div>
   </body>
 </html>

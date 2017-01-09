@@ -160,7 +160,7 @@
 		<< AND c.create_time >= #{beginDate} >>
 		<< AND c.create_time < ADDDATE(#{endDate},1) >>
 		<< AND (c.`name` LIKE CONCAT('%', #{fastQuery}, '%') or c.pinyin LIKE CONCAT('%', #{fastQuery}, '%') or c.phone LIKE CONCAT('%', #{fastQuery}, '%') or c.linkman LIKE CONCAT('%', #{fastQuery}, '%') ) >>
-		<< order by ${orderBy} >>
+		<< order by ${orderBy} ,id >>
 		]]>
 	</select>    
 	                 

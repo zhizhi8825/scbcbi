@@ -29,7 +29,6 @@ import com.gzwanhong.utils.JsonUtil;
 import com.gzwanhong.utils.JxlUtil;
 import com.gzwanhong.utils.PinYin;
 import com.gzwanhong.utils.WhCommon;
-import com.gzwanhong.utils.WhException;
 import com.gzwanhong.utils.WhUtil;
 
 @Service
@@ -375,10 +374,12 @@ public class ClientLogicImpl implements ClientLogic {
 	 * 导入意向客户信息
 	 */
 	@SuppressWarnings("unchecked")
-	public ResultEntity importClientIntention(File file, String webPath, User user) throws Exception {
+	public ResultEntity importClientIntention(File file, String webPath, User user, String optionStr,
+			String sheetMapJson) throws Exception {
 		ResultEntity resultEntity = new ResultEntity();
 
-		String optionStr = WhUtil.getFileText(webPath + WhCommon.config.getProperty("importClientIntentionOption"));
+		// String optionStr = WhUtil.getFileText(webPath +
+		// WhCommon.config.getProperty("importClientIntentionOption"));
 		Map<String, Object> optionMap = JsonUtil.jsonToMap(optionStr, false);
 		Map<String, Client> clientListMap = new HashMap<String, Client>(); // 用来装将要保存的客户数据MAP，key为公司名与项目名，方便后面的去重用
 		List<Client> clientList = new ArrayList<Client>(); // 用来装将要保存的客户数据
@@ -388,12 +389,14 @@ public class ClientLogicImpl implements ClientLogic {
 		TrackRecord trackRecordTemp = null;
 		Map<String, Object> objMap = null;
 		Map<String, Object> paramMap = null;
-		Map<Integer, String> sheetMap = new HashMap<Integer, String>(); // 设定要读的sheet工作表集合
-		sheetMap.put(0, "A");
-		sheetMap.put(1, "B");
-		sheetMap.put(2, "C");
-		sheetMap.put(3, "D");
-		sheetMap.put(4, "O");
+		// Map<Integer, String> sheetMap = new HashMap<Integer, String>(); //
+		// 设定要读的sheet工作表集合
+		// sheetMap.put(0, "A");
+		// sheetMap.put(1, "B");
+		// sheetMap.put(2, "C");
+		// sheetMap.put(3, "D");
+		// sheetMap.put(4, "O");
+		Map<String, Integer> sheetMap = (Map<String, Integer>) JsonUtil.jsonToBean(sheetMapJson, Map.class);
 		String nameToLong = "";
 		String linkmanToLong = "";
 		String remarkToLong = "";
@@ -402,7 +405,14 @@ public class ClientLogicImpl implements ClientLogic {
 
 		// 循环sheetMap，从excel文件里一个个工作区间的取数据
 		List<Client> clientListTemp = null;
-		for (Integer sheetIndex : sheetMap.keySet()) {
+		Integer sheetIndex = null;
+		for (String intentLevel : sheetMap.keySet()) {
+			sheetIndex = sheetMap.get(intentLevel);
+
+			if (WhUtil.isEmpty(sheetIndex)) {
+				continue;
+			}
+
 			optionMap.put("startSheet", sheetIndex);
 			objMap = JxlUtil.convertToBeanPoi(file, optionMap, true);
 			clientListTemp = (List<Client>) objMap.get("clientList");
@@ -444,7 +454,7 @@ public class ClientLogicImpl implements ClientLogic {
 					client.setUserId(user.getId());
 
 					// 设置它的意向级别
-					client.setIntentLevel(sheetMap.get(sheetIndex));
+					client.setIntentLevel(intentLevel);
 
 					try {
 						client.setPinyin(PinYin.converterToFirstSpell(client.getName()));

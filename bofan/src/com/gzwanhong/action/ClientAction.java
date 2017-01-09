@@ -25,6 +25,8 @@ public class ClientAction extends SuperAction {
 	private String order;
 	private String sort;
 	private File file1;
+	private String optionStr;
+	private String sheetMap;
 
 	public File getFile1() {
 		return file1;
@@ -42,8 +44,24 @@ public class ClientAction extends SuperAction {
 		this.paramEntity = paramEntity;
 	}
 
+	public String getOptionStr() {
+		return optionStr;
+	}
+
+	public void setOptionStr(String optionStr) {
+		this.optionStr = optionStr;
+	}
+
 	public String getOrder() {
 		return order;
+	}
+
+	public String getSheetMap() {
+		return sheetMap;
+	}
+
+	public void setSheetMap(String sheetMap) {
+		this.sheetMap = sheetMap;
 	}
 
 	public void setOrder(String order) {
@@ -164,7 +182,8 @@ public class ClientAction extends SuperAction {
 	 * @throws Exception
 	 */
 	public String importClientIntention() throws Exception {
-		ResultEntity resultEntity = clientLogic.importClientIntention(file1, super.getWebPath(), super.getUser());
+		ResultEntity resultEntity = clientLogic.importClientIntention(file1, super.getWebPath(), super.getUser(),
+				optionStr, sheetMap);
 		ajaxResponse(JsonUtil.beanToJson(resultEntity));
 		return NONE;
 	}

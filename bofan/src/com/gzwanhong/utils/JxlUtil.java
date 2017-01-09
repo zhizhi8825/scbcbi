@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Comment;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -604,7 +605,8 @@ public class JxlUtil {
 				sheet = excel.getSheetAt(0);
 			}
 			// 获取工作表的行数跟列数
-			int rowSize = sheet.getPhysicalNumberOfRows();
+//			int rowSize = sheet.getPhysicalNumberOfRows();
+			int rowSize = sheet.getLastRowNum()+1;
 			int columnSize = 0;
 
 			// 开始循环数据表，装载成对象集合
@@ -626,10 +628,16 @@ public class JxlUtil {
 			String argClass = null;
 			Row row = null;
 			org.apache.poi.ss.usermodel.Cell cell = null;
+			Comment comment = null;
 			Method method = null;
 			for (; rowIndex < rowSize; rowIndex++) {
 				// 取出当前行
 				row = sheet.getRow(rowIndex);
+				
+				if(WhUtil.isEmpty(row)){
+					continue;
+				}
+				
 				columnSize = row.getPhysicalNumberOfCells();
 
 				// 定义对象，循环classMap来设定
@@ -688,7 +696,23 @@ public class JxlUtil {
 						columnIndex = WhUtil.toInteger(columnMap.get("columnIndex"));
 						if (columnIndex < columnSize) {
 							cell = row.getCell(WhUtil.toInteger(columnMap.get("columnIndex")));
-							contentStr = cell.getStringCellValue();
+
+							if(!WhUtil.isEmpty(columnMap.get("isComment")) && WhUtil.toBoolean(columnMap.get("isComment"))){
+								//如果是要在附注里读内容的话
+								comment = cell.getCellComment();
+								if(!WhUtil.isEmpty(comment) && !WhUtil.isEmpty(comment.getString()) && !WhUtil.isEmpty(comment.getString().getString())){
+									contentStr = comment.getString().getString();
+								}else {
+									contentStr = "";
+								}
+							} else {
+								//不是在附注里读内容
+								if (org.apache.poi.ss.usermodel.Cell.CELL_TYPE_NUMERIC == cell.getCellType()) {
+									contentStr = WhUtil.toString(cell.getNumericCellValue());
+								} else {
+									contentStr = cell.getStringCellValue();
+								}
+							}
 						} else {
 							contentStr = "";
 						}

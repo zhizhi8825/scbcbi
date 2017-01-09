@@ -296,6 +296,9 @@ User user = (User)request.getAttribute("user");
     			},
     			onLoadSuccess:function(data){
     				$("#form3").form("setData",{});
+    				if(data.rows.length > 0) {
+    					$("#form3").form("setData",data.rows[0]);
+    				}
     			}
     		});
     		
@@ -582,7 +585,7 @@ User user = (User)request.getAttribute("user");
 		                     <td><a id="changeBtn" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-reload',plain:true">转移</a></td>
 		                     <td><div class=" datagrid-btn-separator"></td>
 		                     <%} %>
-		                     <td>搜索：<input type="text" id="clientName"/></td>
+		                     <td><input type="text" id="clientName"/></td>
 		                  </tr>
 		              </tbody>
 		           </table>
@@ -593,9 +596,9 @@ User user = (User)request.getAttribute("user");
   			</div>
   		</div>
   	</div>
-  	<div region="east" style="width:310px;" title="跟踪明细" split="true">
+  	<div region="east" style="width:280px;" title="跟踪明细" split="true">
   		<div class="easyui-layout" fit="true">
-  			<div region="north" style="height:120px;" border="false" split="true">
+  			<div region="north" style="height:200px;" border="false" split="true">
   				<div class="datagrid-toolbar">
 		           <table cellspacing="0" cellpadding="0">
 		              <tbody>
@@ -610,7 +613,7 @@ User user = (User)request.getAttribute("user");
 		                  </tr>
 		              </tbody>
 		           </table>
-		           <form id="form3"><textarea id="record" name="record" rows="4" cols="38"></textarea></form>
+		           <form id="form3"><textarea id="record" name="record" rows="10" cols="40"></textarea></form>
 		        </div>
   			</div>
   			<div region="center" border="false">
