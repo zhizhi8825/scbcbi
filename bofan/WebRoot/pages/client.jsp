@@ -659,6 +659,9 @@ User user = (User)request.getAttribute("user");
   				</td>
   			</tr>
   			<tr>
+  				<td colspan="2" style="text-align:center;font-size:small;color:red;">注意：备注不能填跟踪记录</td>
+  			</tr>
+  			<tr>
   				<td>备注：</td>
   				<td><textarea name="remark" rows="3" cols="20"></textarea></td>
   			</tr>

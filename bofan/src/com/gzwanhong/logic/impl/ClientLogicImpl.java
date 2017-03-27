@@ -95,6 +95,7 @@ public class ClientLogicImpl implements ClientLogic {
 		ResultEntity resultEntity = new ResultEntity();
 		Date now = new Date();
 
+		client.setName(client.getName().replaceAll("\\s", ""));
 		if (WhUtil.isEmpty(client.getId())) {
 			// 保存
 
@@ -305,6 +306,9 @@ public class ClientLogicImpl implements ClientLogic {
 		List<Map<String, Object>> paramList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> paramMap = null;
 		for (Client client : clientList) {
+			//把公司名称的空白字符都处理掉
+			client.setName(client.getName().replaceAll("\\s", ""));
+			
 			if (!WhUtil.isEmpty(client.getIntentLevel()) && WhUtil.isEmpty(client.getProject())) {
 				resultEntity.setResult(false);
 				resultEntity.setError(client.getName() + " 有意向但没写明属于哪个项目");
@@ -430,6 +434,10 @@ public class ClientLogicImpl implements ClientLogic {
 					if (!WhUtil.isEmpty(client.getName()) && client.getName().length() > 100) {
 						nameToLong += client.getName() + ";<br/>";
 					}
+					
+					//把公司名称中的空白字符去掉
+					client.setName(client.getName().replaceAll("\\s", ""));
+					
 					// 联系人过长
 					if (!WhUtil.isEmpty(client.getLinkman()) && client.getLinkman().length() > 100) {
 						linkmanToLong += client.getName() + ";<br/>";

@@ -54,7 +54,9 @@ public class TrackRecordLogicImpl implements TrackRecordLogic {
 		if (!"admin".equals(user.getUserName())) {
 			if (WhUtil.isEmpty(user.getLimitsLevel()) || user.getLimitsLevel().intValue() == 0) {
 				// 最小权限，只能查自己的数据
-				paramEntity.setUserId(user.getId());
+				if (WhUtil.isEmpty(paramEntity.getClientId())) {
+					paramEntity.setUserId(user.getId());
+				}
 			} else if (user.getLimitsLevel().intValue() == 1) {
 				// 横向权限，能查本部门所有人的数据
 				paramEntity.setDeptIds(new String[] { user.getDepartmentId() });

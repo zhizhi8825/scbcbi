@@ -132,6 +132,7 @@
 			<< and u.show_name like CONCAT('%',#{showName},'%') >>
 			<< and u.department_id = #{departmentId} >>
 			<< and u.role_id = #{roleId} >>
+			order by length(u.user_name),u.user_name
 		]]>
 	</select>   
 	

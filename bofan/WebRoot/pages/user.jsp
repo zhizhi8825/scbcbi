@@ -15,6 +15,8 @@ Object user = request.getAttribute("user");
     			url:"<%=path%>/userAction/queryDatagrid.action",
     			fit:true,  
     			pagination:true,
+    			pageSize:50,
+    			pageList:[10,50,100],
     			columns:[[   
     				{field:'ck',checkbox:true},        
     				{title:'账号',field:'userName',width:100},        

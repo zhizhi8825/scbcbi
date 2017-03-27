@@ -16,6 +16,8 @@ Object user = request.getAttribute("user");
     			fit:true,  
     			singleSelect:true,
     			pagination:true,
+    			pageSize:50,
+    			pageList:[10,50,100],
     			columns:[[   
     				{title:'名称',field:'name',width:180},        
     				{title:'编码',field:'code',width:180},        
