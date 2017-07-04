@@ -12,7 +12,7 @@ import com.gzwanhong.entity.ResultEntity;
 public interface ClientLogic {
 	public DatagridEntity queryDatagrid(ParamEntity paramEntity, PageInfo pageInfo, User user) throws Exception;
 
-	public ResultEntity saveOrUpdateClient(Client client, User user) throws Exception;
+	public ResultEntity saveOrUpdateClient(Client client, User user, ParamEntity paramEntity) throws Exception;
 
 	public ResultEntity deleteClient(String[] ids, User user) throws Exception;
 

@@ -128,7 +128,7 @@ public class ClientAction extends SuperAction {
 	}
 
 	public String saveOrUpdateClient() throws Exception {
-		ResultEntity resultEntity = clientLogic.saveOrUpdateClient(client, super.getUser());
+		ResultEntity resultEntity = clientLogic.saveOrUpdateClient(client, super.getUser(), paramEntity);
 		ajaxResponse(JsonUtil.beanToJson(resultEntity));
 		return NONE;
 	}

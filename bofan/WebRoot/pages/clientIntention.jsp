@@ -113,27 +113,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     				text:"保存",
     				iconCls:"icon-save",
     				handler:function(){
-    					if($("#form1").form("validate")){
-    						var data = $("#form1").form("getData");
-    						data = addStrToBeforeKey(data,"client.");
-    						showLoading();
-    						$.ajax({
-    							url:"<%=path%>/clientAction/saveOrUpdateClient.action",
-    							type:"POST",
-    							data:data,
-    							dataType:"json",
-    							success:function(r){
-    								hideLoading();
-    								if(r.result) {
-    									$("#datagrid").datagrid("reload");
-    									toastr.success("保存成功!");
-    									$("#dialog").dialog("close");
-    								} else {
-    									$.messager.alert("提示",r.error);
-    								}
-    							}
-    						});
-    					}
+    					saveOrUpdate();
     				}
     			},{
     				text:"取消",
@@ -143,6 +123,50 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     				}
     			}]
     		});
+    		
+    		//保存方法
+    		function saveOrUpdate (isInsert) {
+    			if($("#form1").form("validate")){
+					var data = $("#form1").form("getData");
+					data = addStrToBeforeKey(data,"client.");
+					
+					if(isInsert) {
+						data["paramEntity.isInsert"] = true;
+					}
+					
+					showLoading();
+					$.ajax({
+						url:"<%=path%>/clientAction/saveOrUpdateClient.action",
+						type:"POST",
+						data:data,
+						dataType:"json",
+						success:function(r){
+							hideLoading();
+							if(r.result) {
+								if(r.code && r.code == 1) {
+									//如果是有相似客户信息的话，就显示出来确认下
+									var msgStr = "发现该项目中有相似的公司，请认真核对是否有撞单。如果确认没撞单，请按“确定”，否则按“取消”。</br><div style='color:red'>注意：如果在后面发现有撞单情况，将判先录入的人为有效。</div>";
+									
+									if(r.obj && r.obj.length>0){
+										$.each(r.obj,function(i,o){
+											msgStr += "</br>"+o.name;
+										});
+									}
+									
+									$("#errorDiv2").html(msgStr);
+    								$("#dialog7").dialog("open");
+								} else {
+									$("#datagrid").datagrid("reload");
+									toastr.success("保存成功!");
+									$("#dialog").dialog("close");
+								}
+							} else {
+								$.messager.alert("提示",r.error);
+							}
+						}
+					});
+				}
+    		}
     		
     		//查询窗口
     		$("#dialog2").dialog({
@@ -635,6 +659,32 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     			}
     			$("#form6").form("setData",data);
     		});
+    		
+    		//错误提示
+    		$("#dialog7").dialog({
+    			title:"提示",
+    			iconCls:"icon-search",
+    			width:400,
+    			height:500,
+    			resizable:true,
+    			maximizable:true,
+    			closed:true,
+    			modal:true,
+    			buttons:[{
+    				text:"确定",
+    				iconCls:"icon-ok",
+    				handler:function(){
+    					saveOrUpdate(true);
+    					$("#dialog7").dialog("close");
+    				}
+    			},{
+    				text:"取消",
+    				iconCls:"icon-ok",
+    				handler:function(){
+    					$("#dialog7").dialog("close");
+    				}
+    			}]
+    		});
     	});
     </script>
   </head>
@@ -660,8 +710,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		                     <td><a href="<%=path %>/template/yiXiangLeiJi.xls" class="easyui-linkbutton" data-options="iconCls:'icon-excel',plain:true">模板</a></td>
 		                     <td><div class=" datagrid-btn-separator"></td>
 		                     <td><a id="addClient" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">增加</a></td>
-		                     <td><div class=" datagrid-btn-separator"></td>
+		                     <!-- <td><div class=" datagrid-btn-separator"></td>
 		                     <td><a id="removeClient" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">删除</a></td>
+		                      -->
 		                     <td><div class=" datagrid-btn-separator"></td>
 		                     <td><a id="editClient" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">修改</a></td>
 		                     <td><div class=" datagrid-btn-separator"></td>
@@ -686,8 +737,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		              <tbody>
 		                  <tr>
 		                     <td><a id="addTrack" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-add',plain:true">增</a></td>
-		                     <td><div class=" datagrid-btn-separator"></td>
+		                     <!-- <td><div class=" datagrid-btn-separator"></td>
 		                     <td><a id="removeTrack" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-remove',plain:true">删</a></td>
+		                      -->
 		                     <td><div class=" datagrid-btn-separator"></td>
 		                     <td><a id="editTrack" href="#" class="easyui-linkbutton" data-options="iconCls:'icon-edit',plain:true">改</a></td>
 		                     <td><div class=" datagrid-btn-separator"></td>
@@ -830,6 +882,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   	</div>
   	<div id="dialog5">
   		<div style="height:100%;width:100%;" id="errorDiv"></div>
+  	</div>
+  	<div id="dialog7">
+  		<div style="height:100%;width:100%;" id="errorDiv2"></div>
   	</div>
   	<div id="dialog6">
  		<div style="margin-top:20px;margin-left:15px;">

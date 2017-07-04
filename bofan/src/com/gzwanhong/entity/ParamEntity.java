@@ -29,6 +29,15 @@ public class ParamEntity {
 	private Date beginDate;
 	private Date endDate;
 	private String fastQuery;
+	private Boolean isInsert;
+
+	public Boolean getIsInsert() {
+		return isInsert;
+	}
+
+	public void setIsInsert(Boolean isInsert) {
+		this.isInsert = isInsert;
+	}
 
 	public String getFastQuery() {
 		return fastQuery;

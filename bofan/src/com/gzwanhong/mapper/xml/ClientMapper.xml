@@ -172,6 +172,7 @@
 			client t
 		WHERE
 			t.intent_level IS NOT NULL
+		and t.`status` !=0
 		AND t.`name` = #{name}
 		AND t.project = #{project}
 		]]>
@@ -212,4 +213,18 @@
 			(c.`name` = #{item.name} and c.project = #{item.project} and c.`status` !=0)
 		</foreach>                                               
 	</select>
+	
+	<select id="hasByLikeNameProject">       
+		<![CDATA[
+		SELECT
+			t.`name`
+		FROM
+			client t
+		WHERE
+			t.intent_level IS NOT NULL
+		and t.`status` !=0
+		AND t.project = #{project}
+		<< AND (${likeSql}) >>
+		]]>
+	</select> 
 </mapper>             

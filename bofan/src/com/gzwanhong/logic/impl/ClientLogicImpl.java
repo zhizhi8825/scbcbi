@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import javax.print.attribute.standard.RequestingUserName;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -91,7 +93,7 @@ public class ClientLogicImpl implements ClientLogic {
 		return datagridEntity;
 	}
 
-	public ResultEntity saveOrUpdateClient(Client client, User user) throws Exception {
+	public ResultEntity saveOrUpdateClient(Client client, User user, ParamEntity paramEntity) throws Exception {
 		ResultEntity resultEntity = new ResultEntity();
 		Date now = new Date();
 
@@ -113,6 +115,27 @@ public class ClientLogicImpl implements ClientLogic {
 					resultEntity.setResult(false);
 					resultEntity.setError("已有该名称与项目的客户，不能再增加");
 					return resultEntity;
+				}
+
+				// 如果isInsert为空或为false，就看下模糊查询出相近的公司名，看有没重复的
+				if (!(!WhUtil.isEmpty(paramEntity) && !WhUtil.isEmpty(paramEntity.getIsInsert())
+						&& paramEntity.getIsInsert())) {
+					String likeSql = getLikeSqlByName(client.getName());
+
+					if (!WhUtil.isEmpty(likeSql)) {
+						Map<String, Object> paramMap = new HashMap<String, Object>();
+						paramMap.put("project", client.getProject());
+						paramMap.put("likeSql", likeSql);
+
+						List<Map<String, Object>> likeList = clientDao.queryBySql(ClientMapper.class,
+								"hasByLikeNameProject", paramMap);
+
+						if (!WhUtil.isEmpty(likeList) && likeList.size() > 0) {
+							resultEntity.setCode(1);
+							resultEntity.setObj(likeList);
+							return resultEntity;
+						}
+					}
 				}
 			}
 
@@ -143,6 +166,27 @@ public class ClientLogicImpl implements ClientLogic {
 					resultEntity.setError("已有该名称与项目的客户，请核实");
 					return resultEntity;
 				}
+				
+				// 如果isInsert为空或为false，就看下模糊查询出相近的公司名，看有没重复的
+				if (!(!WhUtil.isEmpty(paramEntity) && !WhUtil.isEmpty(paramEntity.getIsInsert())
+						&& paramEntity.getIsInsert())) {
+					String likeSql = getLikeSqlByName(client.getName());
+
+					if (!WhUtil.isEmpty(likeSql)) {
+						Map<String, Object> paramMap = new HashMap<String, Object>();
+						paramMap.put("project", client.getProject());
+						paramMap.put("likeSql", likeSql);
+
+						List<Map<String, Object>> likeList = clientDao.queryBySql(ClientMapper.class,
+								"hasByLikeNameProject", paramMap);
+
+						if (!WhUtil.isEmpty(likeList) && likeList.size() > 0) {
+							resultEntity.setCode(1);
+							resultEntity.setObj(likeList);
+							return resultEntity;
+						}
+					}
+				}
 			}
 
 			// 如果项目有做修改，则看是否有冲突
@@ -154,6 +198,27 @@ public class ClientLogicImpl implements ClientLogic {
 					resultEntity.setResult(false);
 					resultEntity.setError("已有该名称与项目的客户，请核实");
 					return resultEntity;
+				}
+				
+				// 如果isInsert为空或为false，就看下模糊查询出相近的公司名，看有没重复的
+				if (!(!WhUtil.isEmpty(paramEntity) && !WhUtil.isEmpty(paramEntity.getIsInsert())
+						&& paramEntity.getIsInsert())) {
+					String likeSql = getLikeSqlByName(client.getName());
+
+					if (!WhUtil.isEmpty(likeSql)) {
+						Map<String, Object> paramMap = new HashMap<String, Object>();
+						paramMap.put("project", client.getProject());
+						paramMap.put("likeSql", likeSql);
+
+						List<Map<String, Object>> likeList = clientDao.queryBySql(ClientMapper.class,
+								"hasByLikeNameProject", paramMap);
+
+						if (!WhUtil.isEmpty(likeList) && likeList.size() > 0) {
+							resultEntity.setCode(1);
+							resultEntity.setObj(likeList);
+							return resultEntity;
+						}
+					}
 				}
 			}
 
@@ -306,9 +371,9 @@ public class ClientLogicImpl implements ClientLogic {
 		List<Map<String, Object>> paramList = new ArrayList<Map<String, Object>>();
 		Map<String, Object> paramMap = null;
 		for (Client client : clientList) {
-			//把公司名称的空白字符都处理掉
+			// 把公司名称的空白字符都处理掉
 			client.setName(client.getName().replaceAll("\\s", ""));
-			
+
 			if (!WhUtil.isEmpty(client.getIntentLevel()) && WhUtil.isEmpty(client.getProject())) {
 				resultEntity.setResult(false);
 				resultEntity.setError(client.getName() + " 有意向但没写明属于哪个项目");
@@ -434,10 +499,10 @@ public class ClientLogicImpl implements ClientLogic {
 					if (!WhUtil.isEmpty(client.getName()) && client.getName().length() > 100) {
 						nameToLong += client.getName() + ";<br/>";
 					}
-					
-					//把公司名称中的空白字符去掉
+
+					// 把公司名称中的空白字符去掉
 					client.setName(client.getName().replaceAll("\\s", ""));
-					
+
 					// 联系人过长
 					if (!WhUtil.isEmpty(client.getLinkman()) && client.getLinkman().length() > 100) {
 						linkmanToLong += client.getName() + ";<br/>";
@@ -575,5 +640,90 @@ public class ClientLogicImpl implements ClientLogic {
 		}
 
 		return resultEntity;
+	}
+
+	public String getLikeSqlByName(String name) {
+		String sql = "";
+		String temp;
+
+		// 把计算机后面的去掉
+		temp = name.replaceAll("计算机.*", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		// 把信息后面的去掉
+		temp = name.replaceAll("信息.*", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		temp = name.replaceAll("建筑.*", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		temp = name.replaceAll("装饰.*", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		temp = name.replaceAll("网络.*", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		temp = name.replaceAll("通讯.*", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		// 把类似科技胡限公司这样的字去掉，找科技
+		temp = name.replaceAll("科技.*", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		// 把工程后面的去掉
+		temp = name.replaceAll("工程.*", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		// 把电子后面的去掉
+		temp = name.replaceAll("电子.*", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		// 把有限公司去掉
+		temp = name.replaceAll("有限.*", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		// 把公司去掉
+		temp = name.replace("公司", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		// 把市字前面的字去掉
+		temp = name.replaceAll(".*市", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		// 去掉地名
+		temp = name.replaceAll("广东|广州|深圳|珠海|汕头|韶关|佛山|江门|湛江|茂名|肇庆|惠州|梅州|汕尾|河源|阳江|清远|东莞|中山|潮州|揭阳|云浮", "");
+		if (!WhUtil.isEmpty(temp)) {
+			name = temp;
+		}
+
+		if (!WhUtil.isEmpty(name)) {
+			sql = "t.`name` like '%" + name + "%'";
+		}
+
+		return sql;
 	}
 }
