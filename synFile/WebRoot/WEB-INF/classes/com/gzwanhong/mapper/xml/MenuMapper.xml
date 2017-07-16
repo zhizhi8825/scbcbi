@@ -1,0 +1,122 @@
+<?xml version="1.0" encoding="UTF-8" ?>                                          
+<!DOCTYPE mapper                                                                     
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"                                      
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">                                   
+<mapper namespace="com.gzwanhong.mapper.MenuMapper">                               
+	<cache></cache>                                                                     
+                                                                                     
+	<sql id="dbName"> menu </sql>                                                     
+	<sql id="columns"> id,name,url,parent_id,seq,remark,create_time </sql>                                                        
+	<sql id="insertVal"> #{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{url,jdbcType=VARCHAR},#{parentId,jdbcType=VARCHAR},#{seq,jdbcType=NUMERIC},#{remark,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP} </sql>                                                      
+	<sql id="insertVal2"> #{item.id,jdbcType=VARCHAR},#{item.name,jdbcType=VARCHAR},#{item.url,jdbcType=VARCHAR},#{item.parentId,jdbcType=VARCHAR},#{item.seq,jdbcType=NUMERIC},#{item.remark,jdbcType=VARCHAR},#{item.createTime,jdbcType=TIMESTAMP} </sql>                                                     
+	<sql id="updateVal"> set name = #{name,jdbcType=VARCHAR},url = #{url,jdbcType=VARCHAR},parent_id = #{parentId,jdbcType=VARCHAR},seq = #{seq,jdbcType=NUMERIC},remark = #{remark,jdbcType=VARCHAR} </sql>                                                     
+	<sql id="updateVal2"> set name = #{item.name,jdbcType=VARCHAR},url = #{item.url,jdbcType=VARCHAR},parent_id = #{item.parentId,jdbcType=VARCHAR},seq = #{item.seq,jdbcType=NUMERIC},remark = #{item.remark,jdbcType=VARCHAR} </sql>                                                    
+                                                                                     
+    <resultMap type="com.gzwanhong.domain.Menu" id="menu"> 
+    	<id property="id" column="id"/>
+    	<result property="name" column="name"/>
+    	<result property="url" column="url"/>
+    	<result property="parentId" column="parent_id"/>
+    	<result property="seq" column="seq"/>
+    	<result property="remark" column="remark"/>
+    	<result property="createTime" column="create_time"/>
+    </resultMap>
+                                                                                     
+	<select id="queryById" resultMap="menu">                                        
+		select * from                                                                   
+		<include refid="dbName" />                                                    
+		where id =                                                                      
+		#{id}                                                                           
+	</select>                                                                           
+                                                                                     
+	<select id="queryByIds" resultMap="menu">                                       
+		select * from                                                                   
+		<include refid="dbName" />                                                    
+		where id in                                                                     
+		<foreach collection="list" item="item" open="(" close=")"               
+			separator=",">#{item}</foreach>                                           
+	</select>                                                                           
+                                                                                     
+	<insert id="save">                                                                
+		insert into                                                                     
+		<include refid="dbName" />                                                    
+		(                                                                               
+		<include refid="columns" />                                                   
+		) values                                                                        
+		(                                                                               
+		<include refid="insertVal" />                                                 
+		)                                                                               
+	</insert>                                                                           
+                                                                                     
+	<insert id="saveAll">                                                             
+		insert into                                                                     
+		<include refid="dbName" />                                                    
+		(                                                                               
+		<include refid="columns" />                                                   
+		) values                                                                        
+		<foreach collection="list" item="item" index="index" separator=",">     
+		(                                                                               
+			<include refid="insertVal2" />                                            
+		)                                                                               
+		</foreach>                                                                      
+	</insert>                                                                           
+                                                                                     
+	<delete id="removeById">                                                          
+		delete from                                                                     
+		<include refid="dbName" />                                                    
+		where id = #{id}                                                                
+	</delete>                                                                           
+                                                                                     
+	<delete id="removeByIds">                                                         
+		delete from                                                                     
+		<include refid="dbName" />                                                    
+		where id in                                                                     
+		<foreach collection="list" item="item" separator="," open="("           
+			close=")">#{item}</foreach>                                               
+	</delete>                                                                           
+                                                                                     
+                                                                                     
+	<delete id="removeBySql">                                   
+		${sqlStr}                                                                       
+	</delete>                                                                           
+                                                                                     
+                                                                                     
+	<update id="update">                                                              
+		update                                                                          
+		<include refid="dbName" />                                                    
+		<include refid="updateVal" />                                                 
+		where id = #{id}                                                                
+	</update>                                                                           
+                                                                                     
+	<update id="updateAll">                                                           
+		<foreach collection="list" item="item" index="index" open="begin"       
+			close="end;">                                                             
+			update                                                                      
+			<include refid="dbName" />                                                
+			<include refid="updateVal2" />                                            
+		where id = #{item.id};                                                          
+		</foreach>                                                                      
+	</update>                                                                           
+                                                                                     
+	<update id="updateBySql">                                                         
+		${sqlStr}                                                                       
+	</update>                                                                           
+                                                                                     
+	<select id="queryByExample" resultMap="menu">                                   
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryBySql" resultMap="menu">                                       
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryBySqlToMap" resultType="map">                                  
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryCountByExample" resultType="integer">                          
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<!-- 以上是自动生成的代码，自定义的查询什么的请写在下面 -->                         
+</mapper>             

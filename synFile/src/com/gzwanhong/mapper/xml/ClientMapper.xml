@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" ?>                                          
+<!DOCTYPE mapper                                                                     
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"                                      
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">                                   
+<mapper namespace="com.gzwanhong.mapper.ClientMapper">                               
+                                                                                     
+	<sql id="dbName"> client </sql>                                                     
+	<sql id="columns"> id,name,pinyin,linkman,phone,qq,email,address,intent_level,project,remark,status,update_id,update_time,user_id,create_time </sql>                                                        
+	<sql id="insertVal"> #{id,jdbcType=VARCHAR},#{name,jdbcType=VARCHAR},#{pinyin,jdbcType=VARCHAR},#{linkman,jdbcType=VARCHAR},#{phone,jdbcType=VARCHAR},#{qq,jdbcType=VARCHAR},#{email,jdbcType=VARCHAR},#{address,jdbcType=VARCHAR},#{intentLevel,jdbcType=VARCHAR},#{project,jdbcType=VARCHAR},#{remark,jdbcType=VARCHAR},#{status,jdbcType=NUMERIC},#{updateId,jdbcType=VARCHAR},#{updateTime,jdbcType=TIMESTAMP},#{userId,jdbcType=VARCHAR},#{createTime,jdbcType=TIMESTAMP} </sql>                                                      
+	<sql id="insertVal2"> #{item.id,jdbcType=VARCHAR},#{item.name,jdbcType=VARCHAR},#{item.pinyin,jdbcType=VARCHAR},#{item.linkman,jdbcType=VARCHAR},#{item.phone,jdbcType=VARCHAR},#{item.qq,jdbcType=VARCHAR},#{item.email,jdbcType=VARCHAR},#{item.address,jdbcType=VARCHAR},#{item.intentLevel,jdbcType=VARCHAR},#{item.project,jdbcType=VARCHAR},#{item.remark,jdbcType=VARCHAR},#{item.status,jdbcType=NUMERIC},#{item.updateId,jdbcType=VARCHAR},#{item.updateTime,jdbcType=TIMESTAMP},#{item.userId,jdbcType=VARCHAR},#{item.createTime,jdbcType=TIMESTAMP} </sql>                                                     
+	<sql id="updateVal"> set name = #{name,jdbcType=VARCHAR},pinyin = #{pinyin,jdbcType=VARCHAR},linkman = #{linkman,jdbcType=VARCHAR},phone = #{phone,jdbcType=VARCHAR},qq = #{qq,jdbcType=VARCHAR},email = #{email,jdbcType=VARCHAR},address = #{address,jdbcType=VARCHAR},intent_level = #{intentLevel,jdbcType=VARCHAR},project = #{project,jdbcType=VARCHAR},remark = #{remark,jdbcType=VARCHAR},status = #{status,jdbcType=NUMERIC},update_id = #{updateId,jdbcType=VARCHAR},update_time = #{updateTime,jdbcType=TIMESTAMP},user_id = #{userId,jdbcType=VARCHAR} </sql>                                                     
+	<sql id="updateVal2"> set name = #{item.name,jdbcType=VARCHAR},pinyin = #{item.pinyin,jdbcType=VARCHAR},linkman = #{item.linkman,jdbcType=VARCHAR},phone = #{item.phone,jdbcType=VARCHAR},qq = #{item.qq,jdbcType=VARCHAR},email = #{item.email,jdbcType=VARCHAR},address = #{item.address,jdbcType=VARCHAR},intent_level = #{item.intentLevel,jdbcType=VARCHAR},project = #{item.project,jdbcType=VARCHAR},remark = #{item.remark,jdbcType=VARCHAR},status = #{item.status,jdbcType=NUMERIC},update_id = #{item.updateId,jdbcType=VARCHAR},update_time = #{item.updateTime,jdbcType=TIMESTAMP},user_id = #{item.userId,jdbcType=VARCHAR} </sql>                                                    
+                                                                                     
+    <resultMap type="com.gzwanhong.domain.Client" id="client"> 
+    	<id property="id" column="id"/>
+    	<result property="name" column="name"/>
+    	<result property="pinyin" column="pinyin"/>
+    	<result property="linkman" column="linkman"/>
+    	<result property="phone" column="phone"/>
+    	<result property="qq" column="qq"/>
+    	<result property="email" column="email"/>
+    	<result property="address" column="address"/>
+    	<result property="intentLevel" column="intent_level"/>
+    	<result property="project" column="project"/>
+    	<result property="remark" column="remark"/>
+    	<result property="status" column="status"/>
+    	<result property="updateId" column="update_id"/>
+    	<result property="updateTime" column="update_time"/>
+    	<result property="userId" column="user_id"/>
+    	<result property="createTime" column="create_time"/>
+    </resultMap>
+                                                                                     
+	<select id="queryById" resultMap="client">                                        
+		select * from                                                                   
+		<include refid="dbName" />                                                    
+		where id =                                                                      
+		#{id}                                                                           
+	</select>                                                                           
+                                                                                     
+	<select id="queryByIds" resultMap="client">                                       
+		select * from                                                                   
+		<include refid="dbName" />                                                    
+		where id in                                                                     
+		<foreach collection="list" item="item" open="(" close=")"               
+			separator=",">#{item}</foreach>                                           
+	</select>                                                                           
+                                                                                     
+	<insert id="save">                                                                
+		insert into                                                                     
+		<include refid="dbName" />                                                    
+		(                                                                               
+		<include refid="columns" />                                                   
+		) values                                                                        
+		(                                                                               
+		<include refid="insertVal" />                                                 
+		)                                                                               
+	</insert>                                                                           
+                                                                                     
+	<insert id="saveAll">                                                             
+		insert into <include refid="dbName" /> (<include refid="columns" />) values <foreach collection="list" item="item" index="index" separator=","> (<include refid="insertVal2" />) </foreach>
+	</insert>                                                                           
+                                                                                     
+	<delete id="removeById">                                                          
+		delete from                                                                     
+		<include refid="dbName" />                                                    
+		where id = #{id}                                                                
+	</delete>                                                                           
+                                                                                     
+	<delete id="removeByIds">                                                         
+		delete from                                                                     
+		<include refid="dbName" />                                                    
+		where id in                                                                     
+		<foreach collection="list" item="item" separator="," open="("           
+			close=")">#{item}</foreach>                                               
+	</delete>                                                                           
+                                                                                     
+                                                                                     
+	<delete id="removeBySql">                                   
+		${sqlStr}                                                                       
+	</delete>                                                                           
+                                                                                     
+                                                                                     
+	<update id="update">                                                              
+		update                                                                          
+		<include refid="dbName" />                                                    
+		<include refid="updateVal" />                                                 
+		where id = #{id}                                                                
+	</update>                                                                           
+                                                                                     
+	<update id="updateAll">                                                           
+		<foreach collection="list" item="item" index="index" open="" close=";" separator=";">update <include refid="dbName" /> <include refid="updateVal2" /> where id = #{item.id}</foreach>	</update>                                                                           
+                                                                                     
+	<update id="updateBySql">                                                         
+		${sqlStr}                                                                       
+	</update>                                                                           
+                                                                                     
+	<select id="queryByExample" resultMap="client">                                   
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryBySql" resultMap="client">                                       
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryBySqlToMap" resultType="map">                                  
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryCountByExample" resultType="integer">                          
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<!-- 以上是自动生成的代码，自定义的查询什么的请写在下面 -->                         
+	
+	<!-- 查询客户信息 -->
+	<select id="queryDatagrid">       
+		<![CDATA[
+		SELECT
+			c.id,
+			c.`name`,
+			c.linkman,
+			c.phone,
+			c.qq,
+			c.email,
+			c.address,
+			c.intent_level AS intentLevel,
+			c.project,
+			c.remark,
+			c.`status`,
+			c.update_id AS updateId,
+			c.update_time AS updateTime,
+			c.user_id AS userId,
+			c.create_time AS createTime,
+			u.show_name as showName,
+			yiXiang.`name` AS intentLevelName,
+			xiangMu.`name` AS projectName
+		FROM
+			client c
+		INNER JOIN `user` u ON c.user_id = u.id
+		LEFT JOIN dictionary yiXiang ON c.intent_level = yiXiang.`code`
+		AND yiXiang.type = 'YIXIANG'
+		LEFT JOIN dictionary xiangMu ON c.project = xiangMu.`code`
+		AND xiangMu.type = 'XIANGMU'
+		WHERE
+			0 = 0
+		   AND c.status = 1
+		<< AND u.department_id IN (#{deptIds}) >>
+		<< AND u.id = #{userId} >>
+		<< AND u.id in (#{userIds}) >>
+		<< AND (c.`name` LIKE CONCAT('%', #{name}, '%') or c.pinyin LIKE CONCAT('%', #{name}, '%') ) >>
+		<< AND c.linkman LIKE CONCAT('%', #{linkman}, '%') >>
+		<< AND c.phone = #{phone} >>
+		<< AND c.qq = #{qq} >>
+		<< AND c.email LIKE CONCAT('%', #{email}, '%') >>
+		<< AND c.address LIKE CONCAT('%', #{address}, '%') >>
+		<< AND c.intent_level = #{intentLevel} >>
+		<< AND ( c.intent_level is ${isIntention} ) >>
+		<< AND c.project = #{project} >>
+		<< AND c.remark LIKE CONCAT('%', #{remark}, '%') >>
+		<< AND c.create_time >= #{beginDate} >>
+		<< AND c.create_time < ADDDATE(#{endDate},1) >>
+		<< AND (c.`name` LIKE CONCAT('%', #{fastQuery}, '%') or c.pinyin LIKE CONCAT('%', #{fastQuery}, '%') or c.phone LIKE CONCAT('%', #{fastQuery}, '%') or c.linkman LIKE CONCAT('%', #{fastQuery}, '%') ) >>
+		<< order by ${orderBy} ,id >>
+		]]>
+	</select>    
+	                 
+	<select id="hasByNameProject">       
+		<![CDATA[
+		SELECT
+			1
+		FROM
+			client t
+		WHERE
+			t.intent_level IS NOT NULL
+		and t.`status` !=0
+		AND t.`name` = #{name}
+		AND t.project = #{project}
+		]]>
+	</select> 
+	
+	<!-- 电话日报表 -->
+	<select id="queryDayReport">       
+		<![CDATA[
+		SELECT
+			u.id,
+			u.show_name as showName,
+			c.`name`,
+			tr.record,
+			c.intent_level AS intentLevel,
+			c.email,
+			c.remark
+		FROM
+			`user` u
+		INNER JOIN client c ON u.id = c.user_id
+		INNER JOIN track_record tr ON c.id = tr.client_id
+		WHERE
+			0 = 0
+		   AND c.status = 1
+		   AND tr.status = 1
+		<< AND u.department_id IN (#{deptIds}) >>
+		<< AND u.id = #{userId} >>
+		<< AND u.id in (#{userIds}) >>
+		<< AND tr.create_time >= #{beginDate} >>
+		<< AND tr.create_time < ADDDATE(#{endDate},1) >>
+		ORDER BY
+			u.id
+		]]>
+	</select>  
+	
+	<select id="queryByNameAndProject" resultMap="client">                                                         
+		select * from client c where 
+		<foreach collection="list" item="item" separator="or" open="" close="">
+			(c.`name` = #{item.name} and c.project = #{item.project} and c.`status` !=0)
+		</foreach>                                               
+	</select>
+	
+	<select id="hasByLikeNameProject">       
+		<![CDATA[
+		SELECT
+			t.`name`
+		FROM
+			client t
+		WHERE
+			t.intent_level IS NOT NULL
+		and t.`status` !=0
+		AND t.project = #{project}
+		<< AND (${likeSql}) >>
+		]]>
+	</select> 
+</mapper>             
