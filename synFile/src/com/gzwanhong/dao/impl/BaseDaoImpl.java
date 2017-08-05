@@ -909,7 +909,7 @@ public class BaseDaoImpl implements BaseDao {
 		// 循环组装sql
 		Object val = null;
 		StringBuffer sb = new StringBuffer();
-		sb.append("select count(1) as c from " + WhUtil.toUnderLine(typeName) + " where 0=0 ");
+		sb.append("select count(id) as c from " + WhUtil.toUnderLine(typeName) + " where 0=0 ");
 
 		String fieldLine = "";
 		for (Field field : fields) {

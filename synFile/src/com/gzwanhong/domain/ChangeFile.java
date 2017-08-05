@@ -9,7 +9,10 @@ public class ChangeFile implements Serializable {
 	 */
 	private static final long serialVersionUID = 1L;
 	public String id;
+	public String fileName;
+	public String oldName;
 	public String filePath;
+	public Long fileSize;
 	public String backupDir;
 	public String targetPath;
 	public Integer fileOrDir;
@@ -26,12 +29,36 @@ public class ChangeFile implements Serializable {
 		this.id = id;
 	}
 
+	public Long getFileSize() {
+		return fileSize;
+	}
+
+	public void setFileSize(Long fileSize) {
+		this.fileSize = fileSize;
+	}
+
 	public String getFilePath() {
 		return filePath;
 	}
 
 	public void setFilePath(String filePath) {
 		this.filePath = filePath;
+	}
+
+	public String getOldName() {
+		return oldName;
+	}
+
+	public void setOldName(String oldName) {
+		this.oldName = oldName;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 
 	public String getBackupDir() {

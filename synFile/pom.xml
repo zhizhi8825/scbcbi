@@ -240,5 +240,11 @@
 			<artifactId>pinyin4j</artifactId>
 			<version>2.5.1</version>
 		</dependency>
+		<!-- jnotify文件监控 -->
+		<dependency>
+			<groupId>net.contentobjects.jnotify</groupId>
+			<artifactId>jnotify</artifactId>
+			<version>0.94</version>
+		</dependency> 
 	</dependencies>
 </project>

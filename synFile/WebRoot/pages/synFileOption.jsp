@@ -12,12 +12,14 @@ User user = (User)request.getAttribute("user");
     <jsp:include page="/pages/include.jsp"/>
     <script type="text/javascript">
     	$(function(){
+    		var isOn = ${isOn};
+    		
     		//文件列表
     		$("#datagrid").datagrid({
-    			url:"<%=path%>/clientAction/queryDatagrid.action",
+    			url:"<%=path%>/synFileOptionAction/queryDatagrid.action",
     			fit:true,  
     			pagination:true,
-    			pageSize:20,
+    			pageSize:50,
     			pageList:[20,50,100],
     			sortName:"createTime",
     			sortOrder:"desc",
@@ -26,26 +28,46 @@ User user = (User)request.getAttribute("user");
     			queryParams:{"paramEntity.isIntention":"NULL"},
     			columns:[[   
     				{field:'ck',checkbox:true},        
-    				{title:'公司名称',field:'name',width:100,sortable:true},
-    				{title:'联系人',field:'linkman',width:100},
-    				{title:'电话',field:'phone',width:100},        
-    				{title:'QQ',field:'qq',width:80}, 
-    				{title:'邮箱',field:'email',width:100}, 
-    				{title:'地址',field:'address',width:100},        
-    				{title:'意向级别',field:'intentLevel',width:100,sortable:true},        
-    				{title:'项目名称',field:'projectName',width:100},        
-    				{title:'备注',field:'remark',width:100},        
-    				{title:'所属业务员',field:'showName',width:100},        
-    				{title:'修改时间',field:'updateTime',width:130,sortable:true},     
-    				{title:'创建时间',field:'createTime',width:130,sortable:true}     
-    			]],
-    			onClickRow:function(index,row){
-    				$("#datagrid2").datagrid("load",{"paramEntity.clientId":row.id});
-    				clickedRow = row;
-    			},
-    			onLoadSuccess:function(data){
-    				clickedRow = undefined;
-    			}
+    				{title:'文件名',field:'fileName',width:140}, 
+    				{title:'原文件名',field:'oldName',width:140},
+    				{title:'操作类型',field:'changeType',width:80,formatter: function(value,row,index){
+    					if(value == 1) {
+    						return "创建";
+    					} else if(value == 2){
+    						return "修改";
+    					} else if(value == 3){
+    						return "删除";
+    					}  else if(value == 4){
+    						return "更名";
+    					} else {
+    						return "";
+    					}
+    				}},
+    				{title:'文件/目录',field:'fileOrDir',width:80,formatter: function(value,row,index){
+    					if(value == 1) {
+    						return "文件";
+    					} else if(value == 2){
+    						return "目录";
+    					} else{
+    						return "";
+    					}
+    				}},
+    				{title:'文件大小',field:'fileSize',width:100},
+    				{title:'状态',field:'status',width:80,formatter: function(value,row,index){
+    					if(value == 0) {
+    						return "待同步";
+    					} else if(value == 1){
+    						return "已同步";
+    					} else{
+    						return "";
+    					}
+    				}},
+    				{title:'文件路径',field:'filePath',width:200},
+    				{title:'备份目录',field:'backupDir',width:200},
+    				{title:'目标路径',field:'targetPath',width:200},
+    				{title:'最近一次同步主机名',field:'clientName',width:120},
+    				{title:'发生时间',field:'createTime',width:150} 
+    			]]
     		});
     		
     		//查询客户按钮
@@ -80,37 +102,23 @@ User user = (User)request.getAttribute("user");
     		function saveOrUpdate (isInsert){
     			if($("#form1").form("validate")){
 					var data = $("#form1").form("getData");
-					data = addStrToBeforeKey(data,"client.");
-					
-					if(isInsert) {
-						data["paramEntity.isInsert"] = true;
-					}
+					data = {"paramEntity.jsonStr":$.toJSON(data)}
 					
 					showLoading();
 					$.ajax({
-						url:"<%=path%>/clientAction/saveOrUpdateClient.action",
+						url:"<%=path%>/configurationAction/saveOrUpdate.action",
 						type:"POST",
 						data:data,
 						dataType:"json",
 						success:function(r){
 							hideLoading();
 							if(r.result) {
-								if(r.code && r.code == 1) {
-									//如果是有相似客户信息的话，就显示出来确认下
-									var msgStr = "发现该项目中有相似的公司，请认真核对是否有撞单。如果确认没撞单，请按“确定”，否则按“取消”。</br><div style='color:red'>注意：如果在后面发现有撞单情况，将判先录入的人为有效。</div>";
-									
-									if(r.obj && r.obj.length>0){
-										$.each(r.obj,function(i,o){
-											msgStr += "</br>"+o.name;
-										});
-									}
-									
-									$("#errorDiv").html(msgStr);
-    								$("#dialog6").dialog("open");
-								} else {
-									$("#datagrid").datagrid("reload");
-									toastr.success("保存成功!");
-									$("#dialog").dialog("close");
+								toastr.success("保存成功！");
+								$("#dialog").dialog("close");
+								
+								//如果是已开启了监控器的话，那就重启它
+								if($("#onOffBtn").linkbutton("options").text == "关闭"){
+									onOff(1);
 								}
 							} else {
 								$.messager.alert("提示",r.error);
@@ -119,6 +127,101 @@ User user = (User)request.getAttribute("user");
 					});
 				}
     		}
+    		
+    		//加载配置信息
+    		function loadConfig () {
+    			$.ajax({
+					url:"<%=path%>/configurationAction/queryConfig.action",
+					type:"POST",
+					dataType:"json",
+					success:function(r){
+						if(r.result) {
+							$("#form1").form("setData",r.obj);
+						} else {
+							$.messager.alert("配置信息加载失败",r.error);
+						}
+					}
+				});
+    		}
+    		loadConfig();
+    		
+    		//开户关闭按钮
+    		$("#onOffBtn").click(function () {
+    			if($("#onOffBtn").linkbutton("options").text == "开启"){
+    				//开启
+    				$.messager.confirm("提示","确定开启？",function(isOk){
+	    				if(isOk) {
+	    					onOff(1);
+    					}
+    				});
+    			} else {
+    				//关闭
+    				$.messager.confirm("提示","确定关闭？",function(isOk){
+	    				if(isOk) {
+	    					onOff(0);
+    					}
+    				});
+    			}
+    		});
+    		
+    		//改变按钮状态
+    		function btnStatus (status) {
+    			if(status == 1) {
+    				//开启
+    				$("#onOffBtn").linkbutton({text:"开启",iconCls:"icon-ok"});
+    			} else {
+    				//关闭
+    				$("#onOffBtn").linkbutton({text:"关闭",iconCls:"icon-cancel"});
+    			}
+    		}
+    		
+    		//启动关闭监控器
+    		function onOff (status) {
+    			if(status == 1) {
+    				//开启
+   					$.ajax({
+   						url:"<%=path%>/synFileOptionAction/onOff.action",
+   						type:"POST",
+   						data:{"paramEntity.status":1},
+   						dataType:"json",
+   						success:function(r){
+   							if(r.result) {
+   								btnStatus(0);
+   								toastr.success("开启成功!");
+   							} else {
+   								$.messager.alert("异常",r.error);
+   							}
+   						}
+   					});
+    			} else {
+    				//关闭
+  					$.ajax({
+   						url:"<%=path%>/synFileOptionAction/onOff.action",
+   						type:"POST",
+   						data:{"paramEntity.status":0},
+   						dataType:"json",
+   						success:function(r){
+   							if(r.result) {
+   								btnStatus(1);
+   								toastr.success("已关闭!");
+   							} else {
+   								$.messager.alert("异常",r.error);
+   							}
+   						}
+   					});
+    			}
+    		}
+    		
+    		//设置当前监控器是否已开启状态
+    		if(isOn) { 
+    			btnStatus(0);
+    		} else {
+    			btnStatus(1);
+    		}
+    		
+    		//定时刷新列表
+    		$("#datagrid").datagrid("reload");
+    		//var vartimer = setInterval(function(){$("#datagrid").datagrid("reload");},2000);
     	});
     </script>
   </head>

@@ -29,7 +29,25 @@ public class ParamEntity {
 	private Date beginDate;
 	private Date endDate;
 	private String fastQuery;
+	private String jsonStr;
 	private Boolean isInsert;
+	private Integer status;
+
+	public Integer getStatus() {
+		return status;
+	}
+
+	public void setStatus(Integer status) {
+		this.status = status;
+	}
+
+	public String getJsonStr() {
+		return jsonStr;
+	}
+
+	public void setJsonStr(String jsonStr) {
+		this.jsonStr = jsonStr;
+	}
 
 	public Boolean getIsInsert() {
 		return isInsert;

@@ -791,8 +791,9 @@ public class WhUtil {
 
 			result = JsonUtil.beanToJson(resultMap.get("retData"));
 		} catch (Exception e) {
-			e.printStackTrace();
+			e.printStackTrace(); 
 		}
 		return result;
 	}
+
 }
