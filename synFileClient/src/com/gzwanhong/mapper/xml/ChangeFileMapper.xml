@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8" ?>                                          
+<!DOCTYPE mapper                                                                     
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"                                      
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">                                   
+<mapper namespace="com.gzwanhong.mapper.ChangeFileMapper">                               
+                                                                                     
+	<sql id="dbName"> change_file </sql>                                                     
+	<sql id="columns"> id,file_name,old_name,file_path,file_size,backup_dir,target_path,file_or_dir,change_type,client_name,status,create_time </sql>                                                        
+	<sql id="insertVal"> #{id,jdbcType=VARCHAR},#{fileName,jdbcType=VARCHAR},#{oldName,jdbcType=VARCHAR},#{filePath,jdbcType=VARCHAR},#{fileSize,jdbcType=VARCHAR},#{backupDir,jdbcType=VARCHAR},#{targetPath,jdbcType=VARCHAR},#{fileOrDir,jdbcType=NUMERIC},#{changeType,jdbcType=NUMERIC},#{clientName,jdbcType=VARCHAR},#{status,jdbcType=NUMERIC},#{createTime,jdbcType=TIMESTAMP} </sql>                                                      
+	<sql id="insertVal2"> #{item.id,jdbcType=VARCHAR},#{item.fileName,jdbcType=VARCHAR},#{item.oldName,jdbcType=VARCHAR},#{item.filePath,jdbcType=VARCHAR},#{item.fileSize,jdbcType=VARCHAR},#{item.backupDir,jdbcType=VARCHAR},#{item.targetPath,jdbcType=VARCHAR},#{item.fileOrDir,jdbcType=NUMERIC},#{item.changeType,jdbcType=NUMERIC},#{item.clientName,jdbcType=VARCHAR},#{item.status,jdbcType=NUMERIC},#{item.createTime,jdbcType=TIMESTAMP} </sql>                                                     
+	<sql id="updateVal"> set file_name = #{fileName,jdbcType=VARCHAR},old_name = #{oldName,jdbcType=VARCHAR},file_path = #{filePath,jdbcType=VARCHAR},file_size = #{fileSize,jdbcType=VARCHAR},backup_dir = #{backupDir,jdbcType=VARCHAR},target_path = #{targetPath,jdbcType=VARCHAR},file_or_dir = #{fileOrDir,jdbcType=NUMERIC},change_type = #{changeType,jdbcType=NUMERIC},client_name = #{clientName,jdbcType=VARCHAR},status = #{status,jdbcType=NUMERIC} </sql>                                                     
+	<sql id="updateVal2"> set file_name = #{item.fileName,jdbcType=VARCHAR},old_name = #{item.oldName,jdbcType=VARCHAR},file_path = #{item.filePath,jdbcType=VARCHAR},file_size = #{item.fileSize,jdbcType=VARCHAR},backup_dir = #{item.backupDir,jdbcType=VARCHAR},target_path = #{item.targetPath,jdbcType=VARCHAR},file_or_dir = #{item.fileOrDir,jdbcType=NUMERIC},change_type = #{item.changeType,jdbcType=NUMERIC},client_name = #{item.clientName,jdbcType=VARCHAR},status = #{item.status,jdbcType=NUMERIC} </sql>                                                    
+                                                                                     
+    <resultMap type="com.gzwanhong.domain.ChangeFile" id="changeFile"> 
+    	<id property="id" column="id"/>
+    	<result property="fileName" column="file_name"/>
+    	<result property="oldName" column="old_name"/>
+    	<result property="filePath" column="file_path"/>
+    	<result property="fileSize" column="file_size"/>
+    	<result property="backupDir" column="backup_dir"/>
+    	<result property="targetPath" column="target_path"/>
+    	<result property="fileOrDir" column="file_or_dir"/>
+    	<result property="changeType" column="change_type"/>
+    	<result property="clientName" column="client_name"/>
+    	<result property="status" column="status"/>
+    	<result property="createTime" column="create_time"/>
+    </resultMap>
+                                                                                     
+	<select id="queryById" resultMap="changeFile">                                        
+		select * from                                                                   
+		<include refid="dbName" />                                                    
+		where id =                                                                      
+		#{id}                                                                           
+	</select>                                                                           
+                                                                                     
+	<select id="queryByIds" resultMap="changeFile">                                       
+		select * from                                                                   
+		<include refid="dbName" />                                                    
+		where id in                                                                     
+		<foreach collection="list" item="item" open="(" close=")"               
+			separator=",">#{item}</foreach>                                           
+	</select>                                                                           
+                                                                                     
+	<insert id="save">                                                                
+		insert into                                                                     
+		<include refid="dbName" />                                                    
+		(                                                                               
+		<include refid="columns" />                                                   
+		) values                                                                        
+		(                                                                               
+		<include refid="insertVal" />                                                 
+		)                                                                               
+	</insert>                                                                           
+                                                                                     
+	<insert id="saveAll">                                                             
+		insert into <include refid="dbName" /> (<include refid="columns" />) values <foreach collection="list" item="item" index="index" separator=","> (<include refid="insertVal2" />) </foreach>
+	</insert>                                                                           
+                                                                                     
+	<delete id="removeById">                                                          
+		delete from                                                                     
+		<include refid="dbName" />                                                    
+		where id = #{id}                                                                
+	</delete>                                                                           
+                                                                                     
+	<delete id="removeByIds">                                                         
+		delete from                                                                     
+		<include refid="dbName" />                                                    
+		where id in                                                                     
+		<foreach collection="list" item="item" separator="," open="("           
+			close=")">#{item}</foreach>                                               
+	</delete>                                                                           
+                                                                                     
+                                                                                     
+	<delete id="removeBySql">                                   
+		${sqlStr}                                                                       
+	</delete>                                                                           
+                                                                                     
+                                                                                     
+	<update id="update">                                                              
+		update                                                                          
+		<include refid="dbName" />                                                    
+		<include refid="updateVal" />                                                 
+		where id = #{id}                                                                
+	</update>                                                                           
+                                                                                     
+	<update id="updateAll">                                                           
+		<foreach collection="list" item="item" index="index" open="" close=";" separator=";">update <include refid="dbName" /> <include refid="updateVal2" /> where id = #{item.id}</foreach>	</update>                                                                           
+                                                                                     
+	<update id="updateBySql">                                                         
+		${sqlStr}                                                                       
+	</update>                                                                           
+                                                                                     
+	<select id="queryByExample" resultMap="changeFile">                                   
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryBySql" resultMap="changeFile">                                       
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryBySqlToMap" resultType="map">                                  
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<select id="queryCountByExample" resultType="integer">                          
+		${sqlStr}                                                                       
+	</select>                                                                           
+                                                                                     
+	<!-- 以上是自动生成的代码，自定义的查询什么的请写在下面 -->                         
+	
+	<select id="querySynFile" resultType="map">                                  
+		SELECT
+			cf.id,
+			cf.file_name AS fileName,
+			cf.file_path AS filePath,
+			cf.backup_dir AS backupDir,
+			cf.target_path AS targetPath,
+			cf.file_or_dir AS fileOrDir,
+			cf.change_type AS changeType,
+			cf.client_name AS clientName,
+			cf.`status`,
+			cf.create_time AS createTime
+		FROM
+			change_file cf     
+		ORDER BY
+			cf.create_time DESC                                                           
+	</select>                            
+</mapper>             
